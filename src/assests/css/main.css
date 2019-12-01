@@ -1,0 +1,4 @@
+.float_left{float: left;}
+.content{padding: 24px;
+    flex-grow: 1;
+    background-color: #fff;}

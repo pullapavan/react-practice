@@ -1,12 +1,12 @@
-import { authDataFromStorage } from '../../store/persistandrestorestate'
-import { REFRESH } from './constants'
+import { authDataFromStorage, saveStateToLocalStorae } from '../../store/persistandrestorestate'
+import { LOGOUT, LOGIN } from './constants'
 
-const reducer = (state = authDataFromStorage(), action) => {
-    console.log("Initialising reducer with ")
-    console.log(state)
+const loginreducer = (state = authDataFromStorage() || {}, action) => {
+
     switch (action.type) {
-        case REFRESH: window.localStorage.removeItem('AUTH_DATA');return {}
+        case LOGOUT: window.localStorage.removeItem('AUTH_DATA'); return {}
+        case LOGIN: saveStateToLocalStorae(action.data || {}); return { ...action.data }
         default: return authDataFromStorage()
     }
 }
-export default reducer;
+export default loginreducer;

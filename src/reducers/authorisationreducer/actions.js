@@ -11,3 +11,15 @@ export function decrement() {
 export function refresh() {
     return { type: 'REFRESH' }
 }
+
+export function login(data) {
+    return {
+        type: 'LOGIN', data
+    }
+}
+
+export function logout(){
+    return{
+        type : 'LOGOUT'
+    }
+}

@@ -4,12 +4,14 @@ import Nav from 'react-bootstrap/Nav';
 import { Switch, Link, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import LoginAccessLink from '../loginaccesslink'
-import LoginAccessRoute from '../loginaccessroute'
+import ProtectedLink from '../protectedlink'
+import ProtectedRoute from '../protectedroute'
 import LoginComponent from '../logincomponent/logincomponent';
 import RegisterComponent from '../registercomponent/registercomponent';
 import ProjectSubmissionComponent from '../projectsubmissioncomponent/projectsubmissionComponent';
 import { logout } from '../../reducers/authorisationreducer/actions'
+import TeamFormationComponent from '../teamformation/teamformation'
+import PanelCreationComponent from '../createpanel/createpanel'
 
 class MainComponent extends React.Component {
     constructor(props) {
@@ -22,24 +24,27 @@ class MainComponent extends React.Component {
                 <Navbar bg="primary" variant="dark">
                     <Navbar.Brand>Hackthon</Navbar.Brand>
                     <Nav className="mr-auto">
-                        <LoginAccessLink to="/home" displayname="HOME" loginrequired={false} />
-                        <LoginAccessLink to="/rules" displayname="RULES" loginrequired={false} />
-                        <LoginAccessLink to="/register" displayname="REGISTRATION" hideonlogin={true} loginrequired={false} />
-                        <LoginAccessLink to="/login" displayname="LOGIN" hideonlogin={true} loginrequired={false} />
-                        <LoginAccessLink to="/project" displayname="PROJECT SUBMISSION" loginrequired={true} />
-                        <LoginAccessLink to="/home" onClick={this.props.logout} displayname="LOGOUT" loginrequired={true} />
+                        <ProtectedLink to="/home" displayname="HOME" />
+                        <ProtectedLink to="/rules" displayname="OVERVIEW" />
+                        <ProtectedLink to="/register" displayname="REGISTRATION" hideonlogin={true} />
+                        <ProtectedLink to="/login" displayname="LOGIN" hideonlogin={true} />
+                        {/* <ProtectedLink to="/project" displayname="PROJECT SUBMISSION" mustlogin={true} /> */}
+                        <ProtectedLink to="/project" displayname="PROJECT SUBMISSION" mustlogin={false} />
+                        <ProtectedLink to="/panel" displayname="PANEL MEMBERS" mustlogin={true} admin={true} />
+                        <ProtectedLink to="/projectlist" displayname="PROJECTS LIST" mustlogin={true} admin={true} panel={true} />
+                        <ProtectedLink to="/login" onClick={this.props.logout} displayname="LOGOUT" mustlogin={true} />
                     </Nav >
                 </Navbar >
                 <div className="text-center">
                     <Switch>
-                        <LoginAccessRoute path="/login" hideonlogin={true} loginrequired={false} component={LoginComponent} />
-                        <LoginAccessRoute path="/project" loginrequired={true} component={ProjectSubmissionComponent} />
-                        <LoginAccessRoute path="/register" hideonlogin={true} loginrequired={false} component={RegisterComponent} />
                         <Route path='/home' render={() => <div>Home Component</div>}></Route>
-                        <Route
-                            path='/rules'
-                            render={() => <div>Rules Component</div>}>
-                        </Route>
+                        <Route path='/rules' render={() => <div>Rules Component</div>}></Route>
+                        <ProtectedRoute path="/register" hideonlogin={true} component={RegisterComponent} />
+                        <ProtectedRoute path="/login" hideonlogin={true} component={LoginComponent} />
+                        {/* <ProtectedRoute path="/project" mustlogin={true} component={ProjectSubmissionComponent} /> */}
+                        <ProtectedRoute path="/project" mustlogin={false} component={ProjectSubmissionComponent} />
+                        <ProtectedRoute path="/panel" mustlogin={true} admin={true} component={PanelCreationComponent} />
+                        <ProtectedRoute path="/projectlist" mustlogin={true} admin={true} panel={true} />
                     </Switch>
                 </div>
             </div>

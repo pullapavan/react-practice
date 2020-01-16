@@ -10,6 +10,7 @@ import { combineReducers } from 'redux'
 import { saveStateToLocalStorae } from '../src/store/persistandrestorestate'
 import MainComponent from './components/maincomponent/index'
 
+
 const store = createStore(combineReducers({ login: loginreducer })); // define the Redux store here, passing in your reducers
 
 const MOUNT_NODE = document.getElementById('root');

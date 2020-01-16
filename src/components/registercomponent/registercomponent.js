@@ -44,21 +44,35 @@ class LoginComponent extends React.Component {
     handleSubmit = (event) => {
         if (this.validateForm()) {
             alert(this.state.password)
-            AXIOS.post('user/register', { id: this.state.empid, password: this.state.password, email: this.state.empemail }).
-                then(response => {
-                    console.log(response)
-                    if (response && response.data && this.state.empid == response.data.id) {
-                        this.props.login({ empid: response.data.id, empemail: response.data.email, roles: response.data.roles })
-                        this.props.history.push("/project")
-                    } else {
-                        this.setGenericError();
-                        return
+            // AXIOS.post('user/register', { id: this.state.empid, password: this.state.password, email: this.state.empemail }).
+            //     then(response => {
+            //         console.log(response)
+            //         if (response && response.data && this.state.empid == response.data.id) {
+            //             this.props.login({ session: true, empid: response.data.id, empemail: response.data.email, roles: response.data.roles })
+            //             this.props.history.push("/project")
+            //         } else {
+            //             this.setGenericError();
+            //             return
+            //         }
+            //     }).catch(error => {
+            //         console.log(error)
+            //         this.setGenericError();
+            //         return
+            //     })
+            this.props.login({
+                session: true,
+                empid: '422',
+                empemail: '422@hdworks.in',
+                roles: ['USER', 'ADMIN'],
+                teams: [
+                    {
+                        name: "TEAM_123",
+                        createdby: "422",
+                        members: ["423", "424", "425"]
                     }
-                }).catch(error => {
-                    console.log(error)
-                    this.setGenericError();
-                    return
-                })
+                ]
+            })
+            this.props.history.push("/project")
 
         } else {
             this.setState({

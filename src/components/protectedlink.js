@@ -7,7 +7,7 @@ const ProtectedLink = ({ ...props }) => {
     let showlink = false
     let isloggedin, isAdmin, isPanel
 
-    props.empid && (isloggedin = true)
+    props.session && (isloggedin = true)
     isloggedin && props.roles && props.roles.includes("ADMIN") && (isAdmin = true)
     isloggedin && props.roles && props.roles.includes("PANEL") && (isPanel = true)
 
@@ -36,7 +36,8 @@ const mapStateToProps = function (state) {
     return {
         empid: state.login.empid,
         empmail: state.login.empmail,
-        roles: state.login.roles
+        roles: state.login.roles,
+        session : state.login.session
     }
 }
 export default connect(mapStateToProps)(ProtectedLink)

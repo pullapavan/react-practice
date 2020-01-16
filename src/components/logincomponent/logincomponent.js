@@ -24,7 +24,7 @@ class LoginComponent extends React.Component {
     }
 
     componentDidMount() {
-        if (this.props.empid) {
+        if (this.props.session) {
             this.props.history.push("/home")
         }
     }
@@ -42,21 +42,35 @@ class LoginComponent extends React.Component {
 
     handleSubmit = (event) => {
         if (this.validateForm()) {
-            AXIOS.post('user/login', { emailOrId: this.state.empid, password: this.state.password }).
-                then(response => {
-                    console.log(response)
-                    if (response && response.data) {
-                        this.props.login({ empid: response.data.id, empemail: response.data.email, roles: response.data.roles })
-                        this.props.history.push("/project")
-                    } else {
-                        this.setGenericError();
-                        return
-                    }
-                }).catch(error => {
-                    console.log(error)
-                    this.setGenericError();
-                    return
-                })
+            // AXIOS.post('user/login', { emailOrId: this.state.empid, password: this.state.password }).
+            //     then(response => {
+            //         console.log(response)
+            //         if (response && response.data) {
+            //             this.props.login({ session: true, empid: response.data.id, empemail: response.data.email, roles: response.data.roles })
+            //             this.props.history.push("/project")
+            //         } else {
+            //             this.setGenericError();
+            //             return
+            //         }
+            //     }).catch(error => {
+            //         console.log(error)
+            //         this.setGenericError();
+            //         return
+            //     })
+            this.props.login({
+                session: true,
+                empid: '422',
+                empemail: '422@hdworks.in',
+                roles: ['USER', 'ADMIN', 'PANEL']
+                // teams: [
+                //     {
+                //         name: "TEAM_123",
+                //         createdby: "422",
+                //         members: ["423", "424", "425"]
+                //     }
+                // ]
+            })
+            this.props.history.push("/project")
 
         } else {
             this.setState({
@@ -112,6 +126,7 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = function (state) {
     return {
         empid: state.login.empid,
+        session: state.login.session
     }
 }
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(LoginComponent))

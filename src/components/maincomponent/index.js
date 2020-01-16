@@ -28,8 +28,7 @@ class MainComponent extends React.Component {
                         <ProtectedLink to="/rules" displayname="OVERVIEW" />
                         <ProtectedLink to="/register" displayname="REGISTRATION" hideonlogin={true} />
                         <ProtectedLink to="/login" displayname="LOGIN" hideonlogin={true} />
-                        {/* <ProtectedLink to="/project" displayname="PROJECT SUBMISSION" mustlogin={true} /> */}
-                        <ProtectedLink to="/project" displayname="PROJECT SUBMISSION" mustlogin={false} />
+                        <ProtectedLink to="/project" displayname="PROJECT SUBMISSION" mustlogin={true} />
                         <ProtectedLink to="/panel" displayname="PANEL MEMBERS" mustlogin={true} admin={true} />
                         <ProtectedLink to="/projectlist" displayname="PROJECTS LIST" mustlogin={true} admin={true} panel={true} />
                         <ProtectedLink to="/login" onClick={this.props.logout} displayname="LOGOUT" mustlogin={true} />
@@ -39,10 +38,10 @@ class MainComponent extends React.Component {
                     <Switch>
                         <Route path='/home' render={() => <div>Home Component</div>}></Route>
                         <Route path='/rules' render={() => <div>Rules Component</div>}></Route>
+                        <Route path='/team' component={TeamFormationComponent}></Route>
                         <ProtectedRoute path="/register" hideonlogin={true} component={RegisterComponent} />
                         <ProtectedRoute path="/login" hideonlogin={true} component={LoginComponent} />
-                        {/* <ProtectedRoute path="/project" mustlogin={true} component={ProjectSubmissionComponent} /> */}
-                        <ProtectedRoute path="/project" mustlogin={false} component={ProjectSubmissionComponent} />
+                        <ProtectedRoute path="/project" mustlogin={true} component={ProjectSubmissionComponent} />
                         <ProtectedRoute path="/panel" mustlogin={true} admin={true} component={PanelCreationComponent} />
                         <ProtectedRoute path="/projectlist" mustlogin={true} admin={true} panel={true} />
                     </Switch>

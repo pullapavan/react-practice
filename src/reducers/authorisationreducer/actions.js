@@ -18,8 +18,14 @@ export function login(data) {
     }
 }
 
-export function logout(){
-    return{
-        type : 'LOGOUT'
+export function logout() {
+    return {
+        type: 'LOGOUT'
+    }
+}
+
+export function setTeams(data) {
+    return {
+        type: 'SET_TEAMS', data
     }
 }

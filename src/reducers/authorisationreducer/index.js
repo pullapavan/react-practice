@@ -5,12 +5,11 @@ const loginreducer = (state = authDataFromStorage() || {}, action) => {
 
     switch (action.type) {
         case LOGOUT: window.localStorage.removeItem('AUTH_DATA'); return {}
-        case LOGIN: saveStateToLocalStorae(action.data || {}); return { ...action.data }
+        case LOGIN: return { ...action.data }
         case SET_TEAMS:
             let teams = state.teams || [];
             if (action.data) {
-                teams.push(action.date)
-                saveStateToLocalStorae({ ...state, teams })
+                teams.push(action.date)                
                 return ({ ...state, teams })
             }
             return state;

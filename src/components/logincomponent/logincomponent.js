@@ -34,55 +34,39 @@ class LoginComponent extends React.Component {
         this.setState({ [name]: value, error: false, errormessage: null })
     }
 
-    setGenericError = () => {
+    setGenericError = (msg) => {
         this.setState({
-            error: true, errormessage: "please try after some time"
+            error: true, errormessage: msg || "please try after some time"
         })
     }
 
     handleSubmit = (event) => {
         if (this.validateForm()) {
-            // AXIOS.post('user/login', { emailOrId: this.state.empid, password: this.state.password }).
-            //     then(response => {
-            //         console.log(response)
-            //         if (response && response.data) {
-            //             this.props.login({ session: true, empid: response.data.id, empemail: response.data.email, roles: response.data.roles })
-            //             this.props.history.push("/project")
-            //         } else {
-            //             this.setGenericError();
-            //             return
-            //         }
-            //     }).catch(error => {
-            //         console.log(error)
-            //         this.setGenericError();
-            //         return
-            //     })
-            this.props.login({
-                session: true,
-                empid: '422',
-                empemail: '422@hdworks.in',
-                roles: ['USER', 'ADMIN', 'PANEL']
-                // teams: [
-                //     {
-                //         name: "TEAM_123",
-                //         createdby: "422",
-                //         members: ["423", "424", "425"]
-                //     }
-                // ]
-            })
-            this.props.history.push("/project")
-
-        } else {
-            this.setState({
-                error: true, errormessage: "please enter valid details"
-            })
-            return false
+            AXIOS.post('user/login', { id: this.state.empid, password: this.state.password }).
+                then(response => {
+                    console.log(response)
+                    if (response && response.data) {
+                        this.props.login({ session: true, empid: response.data.id, empemail: response.data.email, roles: response.data.roles })
+                        this.props.history.push("/project")
+                    } else {
+                        this.setGenericError();
+                        return
+                    }
+                }).catch(error => {
+                    console.log(error.response)
+                    this.setGenericError((error.response && error.response.data && error.response.data.error.message));
+                    return
+                })            
         }
     }
 
     validateForm = () => {
-        if (isEmpty(this.state.empid) ||
-            !validatePassword(this.state.password)) {
+        if (!validateEmployeeId(this.state.empid)) {
+            this.setGenericError("Enter a valid empid/email");
+            return false;
+        }
+        if (!validatePassword(this.state.password)) {
+            this.setGenericError("Enter a valid Password");
             return false;
         }
         return true;

@@ -8,6 +8,8 @@ import { login, setTeams } from '../../reducers/authorisationreducer/actions'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import Table from 'react-bootstrap/Table'
+import AXIOS from '../../configurations/axiosinterceptor'
+import CommonModal from '../commoncomponents/modal'
 import { validateEmployeeId, validateEmployeeEmailId, validatePassword, isEmpty } from '../../validations/fieldvalidations'
 
 class ProjectSubmissionComponent extends React.Component {
@@ -18,11 +20,11 @@ class ProjectSubmissionComponent extends React.Component {
     initialState = () => {
         return {
             projecttitle: null,
-            projecttype: null,
+            projecttype: "Java",
             projecttarget: null,
             projectdescription: null,
             projectteam: null,
-            teams: [],
+            existingteams: [],
             submittedprojects: [],
             error: false,
             errormessage: null
@@ -36,24 +38,33 @@ class ProjectSubmissionComponent extends React.Component {
         this.getAllSubmittedProjects()
     }
     getAllTeams = () => {
-        //TODO get from server
-        this.setState({
-            teams: [{
-                name: "TEAM_123",
-                createdby: "422",
-                members: ["423", "424", "425"]
-            }]
+        AXIOS.get('team/all/by/' + this.props.empid).then((response) => {
+            if (response && response.data) {
+                console.log(response)
+                let { existingteams } = this.state
+                response.data.forEach((object, index) => {
+                    existingteams.push(object)
+                })
+                this.setState({ existingteams, projectteam: existingteams[0].id })
+            }
+        }).catch(error => {
+            console.log(error.response)
+            // this.errorAck(error.response && error.response.data && error.response.data.error && error.response.data.error.message)
         })
     }
     getAllSubmittedProjects = () => {
-        //TODO GET FROM SERVER
-        this.setState({
-            submittedprojects: [{
-                title: "demo project",
-                type: "JAVA",
-                description: "DEmo project description",
-                teamId: "TEAM ID"
-            }]
+        AXIOS.get('idea/by/' + this.props.empid).then((response) => {
+            if (response && response.data) {
+                console.log(response)
+                let { submittedprojects } = this.state
+                response.data.forEach((object) => {
+                    submittedprojects.push(object)
+                })
+                this.setState({ submittedprojects })
+            }
+        }).catch(error => {
+            console.log(error.response)
+            // this.errorAck(error.response && error.response.data && error.response.data.error && error.response.data.error.message)
         })
     }
     handleChange = (event) => {
@@ -61,7 +72,7 @@ class ProjectSubmissionComponent extends React.Component {
         this.setState({ [name]: value, error: false })
     }
     errorAck = (msg) => {
-        this.setState({ error: true, errormessage: msg || "Enter valid registered empID" })
+        this.setState({ error: true, errormessage: msg || "some thing went wrong" })
     }
     submitProject = () => {
         if (isEmpty(this.state.projecttitle)) {
@@ -80,24 +91,36 @@ class ProjectSubmissionComponent extends React.Component {
             this.errorAck("Enter valid project description")
             return;
         }
-        alert(this.state.projectteam)
-        // if (isEmpty(this.state.projectteam)) {
-        //     this.errorAck("Enter valid project team")
-        //     return;
-        // }
+        if (isEmpty(this.state.projectteam)) {
+            this.errorAck("Enter valid project team")
+            return;
+        }
         this.saveProjectToDatabase()
     }
     saveProjectToDatabase = () => {
         //TODO make a server call
-        var newproject = {
+        AXIOS.post('idea', {
             title: this.state.projecttitle,
             type: this.state.projecttype,
             description: this.state.projectdescription,
-            teamId: this.state.projectteam
-        }
-        let { submittedprojects } = this.state
-        submittedprojects.push(newproject)
-        this.setState({ ...this.initialState(), submittedprojects })
+            teamId: this.state.projectteam,
+            submittedBy: this.props.empid
+        }).then((response) => {
+            console.log(response)
+            if (response && response.data && response.data.submittedBy == this.props.empid) {
+                let { submittedprojects } = this.state
+                submittedprojects.push(response.data)
+                this.setState({
+                    submittedprojects, projecttitle: null,
+                    projecttype: "Java",
+                    projecttarget: null,
+                    projectdescription: null
+                })
+                this.errorAck("Project created Successfully")
+            }
+        }).catch(error => {
+            this.errorAck(error.response && error.response.data && error.response.data.error && error.response.data.error.message)
+        })
     }
     typeChange = (event) => {
         let { name } = event.target
@@ -119,7 +142,7 @@ class ProjectSubmissionComponent extends React.Component {
                             <Form>
                                 <Form.Group as={Col} controlId="projecttitle">
                                     <Form.Label style={mystyle.floatleft}>Project Title</Form.Label>
-                                    <Form.Control onChange={this.handleChange} name="projecttitle" type="text" placeholder="Enter Project Title" />
+                                    <Form.Control value={this.state.projecttitle} onChange={this.handleChange} name="projecttitle" type="text" placeholder="Enter Project Title" />
                                 </Form.Group>
                                 <Form.Group as={Col} controlId="projecttype">
                                     <Form.Label style={mystyle.floatleft}>Project Type</Form.Label>
@@ -132,17 +155,17 @@ class ProjectSubmissionComponent extends React.Component {
                                 </Form.Group>
                                 <Form.Group as={Col} controlId="projecttarget">
                                     <Form.Label style={mystyle.floatleft}>Project Target</Form.Label>
-                                    <Form.Control onChange={this.handleChange} name="projecttarget" type="text" placeholder="Enter Project Targetdate" />
+                                    <Form.Control value={this.state.projecttarget} onChange={this.handleChange} name="projecttarget" type="text" placeholder="Enter Project Targetdate" />
                                 </Form.Group>
                                 <Form.Group as={Col} controlId="project description">
                                     <Form.Label style={mystyle.floatleft}>project Description</Form.Label>
-                                    <Form.Control onChange={this.handleChange} name="projectdescription" as="textarea" placeholder="Description" />
+                                    <Form.Control value={this.state.projectdescription}  onChange={this.handleChange} name="projectdescription" as="textarea" placeholder="Description" />
                                 </Form.Group>
                                 <Form.Group as={Col} controlId="projectteam">
                                     <Form.Label style={mystyle.floatleft}>Select Your Team</Form.Label>
                                     <select className="form-control" name="projectteam" id="projectteam" onChange={this.typeChange} value={this.state.projectteam}>
-                                        {this.state.teams.map(function (object, index) {
-                                            return <option value={object.name}>{object.name}</option>
+                                        {this.state.existingteams.map((object, index) => {
+                                            return <option key={index} value={object.id}>{object.name}</option>
                                         })}
                                     </select>
                                 </Form.Group>
@@ -153,13 +176,14 @@ class ProjectSubmissionComponent extends React.Component {
                     </div>
                 </div>
                 <hr></hr>
-                <div style={mystyle.p10, mystyle.floatleft}>
+                <div style={mystyle.p10}>
                     <h5>Projects Submitted by you</h5>
                 </div>
                 <Table striped bordered hover>
                     <thead>
                         <tr>
                             <th>Project Title</th>
+                            <th>Submitted By</th>
                             <th>Project Type</th>
                             <th>Project Target</th>
                             <th>Project Description</th>
@@ -168,13 +192,14 @@ class ProjectSubmissionComponent extends React.Component {
                         </tr>
                     </thead>
                     {this.state.submittedprojects.map(function (object, index) {
-                        return <tbody>
+                        return <tbody key={index}>
                             <tr>
                                 <td>{object.title}</td>
+                                <td>HDW-{object.submittedBy}</td>
                                 <td>{object.type}</td>
                                 <td>{object.target}</td>
                                 <td>{object.description}</td>
-                                <td>{object.teamId}</td>
+                                <td>{object.teamName}</td>
                                 <td>NA</td>
                             </tr>
                         </tbody>

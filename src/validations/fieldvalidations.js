@@ -9,7 +9,8 @@ export function validateEmployeeId(empId) {
 }
 
 export function validateEmployeeEmailId(email) {
-    if (!email || email.length === 0) {
+    var reg = /^[a-zA-Z]+\.{1}[a-zA-Z]+@hdworks.in$/
+    if (!email || email.length === 0 || !reg.test(email)) {
         return false;
     }
     return true;
@@ -28,7 +29,12 @@ export function isEmpty(source) {
 export function isEmployeExists(empid) {
     if (validateEmployeeId(empid)) {
         //TODO get data from the server
-        return true;
+        AXIOS.get('user/by/id?id=' + empid).then((response) => {
+            if (response && response.data && response.data.id == empid) {
+                return true;
+            }
+        }).catch(error => {
+            return false;
+        })
     }
-    return true;
 }

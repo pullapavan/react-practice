@@ -26,6 +26,13 @@ const ProtectedRoute = ({ component: Component, ...props }) => {
     if (props.panel) {
         showlink = isPanel
     }
+    if (props.adminaandpanel) {
+        if (!isAdmin && !isPanel) {
+            showlink = false
+        } else {
+            showlink = true
+        }
+    }
     return (
         <Route
             render={
@@ -40,7 +47,7 @@ const ProtectedRoute = ({ component: Component, ...props }) => {
 const mapStateToProps = function (state) {
     return {
         empid: state.login.empid,
-        empmail: state.login.empmail,
+        empmail: state.login.empemail,
         roles: state.login.roles,
         session: state.login.session
     }

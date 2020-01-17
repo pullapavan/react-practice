@@ -28,8 +28,16 @@ const ProtectedLink = ({ ...props }) => {
     if (props.panel) {
         showlink = isPanel
     }
+
+    if (props.adminaandpanel) {
+        if (!isAdmin && !isPanel) {
+            showlink = false
+        } else {
+            showlink = true
+        }
+    }
     return (
-        showlink ? <Nav.Link ><Link onClick={props.onClick} to={props.to}><span style={{ color: "white" }}>{props.displayname}</span></Link></Nav.Link> : null
+        showlink ? <Nav.Item><Link onClick={props.onClick} to={props.to}><span style={{ color: "white", margin: '1rem' }}>{props.displayname}</span></Link></Nav.Item> : null
     )
 }
 const mapStateToProps = function (state) {
@@ -37,7 +45,7 @@ const mapStateToProps = function (state) {
         empid: state.login.empid,
         empmail: state.login.empmail,
         roles: state.login.roles,
-        session : state.login.session
+        session: state.login.session
     }
 }
 export default connect(mapStateToProps)(ProtectedLink)

@@ -9,6 +9,7 @@ import { connect } from 'react-redux'
 import { withRouter } from "react-router";
 import Table from 'react-bootstrap/Table'
 import { Link } from "react-router-dom";
+import AXIOS from '../../configurations/axiosinterceptor'
 import { validateEmployeeId, validateEmployeeEmailId, validatePassword, isEmpty, isEmployeExists } from '../../validations/fieldvalidations'
 
 class TeamFormationComponent extends React.Component {
@@ -30,20 +31,30 @@ class TeamFormationComponent extends React.Component {
         this.getExistingTeams()
     }
     getExistingTeams = () => {
-        if (this.props.teams && this.props.teams.length > 0) {
-            this.setState({ teams: this.props.teams })
-        } else {
-            //TODO server call to get teams
-            this.setState({
-                teams: [
-                    {
-                        name: "TEAM_123",
-                        createdby: "422",
-                        members: ["423", "424", "425"]
-                    }
-                ]
-            })
-        }
+
+        AXIOS.get('team/all/by/' + this.props.empid).then((response) => {
+            if (response && response.data) {
+                console.log(response)
+                let { existingteams } = this.state
+                response.data.forEach((object) => {
+                    existingteams.push(object)
+                })
+                this.setState({ existingteams })
+            }
+        }).catch(error => {
+            console.log(error.response)
+            // this.errorAck(error.response.data && error.response.data.error && error.response.data.error.message)
+        })
+
+        this.setState({
+            teams: [
+                {
+                    name: "TEAM_123",
+                    createdby: "422",
+                    members: ["423", "424", "425"]
+                }
+            ]
+        })
     }
 
     handleChange = (event) => {
@@ -63,17 +74,34 @@ class TeamFormationComponent extends React.Component {
         this.saveToDatabase()
     }
 
-    saveToDatabase = () => {
-        //TODO CONNECT TO SERVER
-        let newTeam = {
-            name: this.state.teamname,
-            createdby: this.props.empids,
-            members: this.state.dynamicteammumbers
-        }
-        let { existingteams } = this.state
-        existingteams.push(newTeam)
-        this.setState({ dynamicteammumbers: [], existingteams, error: true, errormessage: "team created Successfully" })
+    setGenericError = (msg) => {
+        this.setState({
+            error: true, errormessage: msg || "please try after some time"
+        })
+    }
 
+    saveToDatabase = () => {
+
+        AXIOS.post('team', {
+            name: this.state.teamname,
+            createdBy: this.props.empid,
+            members: this.state.dynamicteammumbers
+        }).
+            then(response => {
+                console.log(response)
+                if (response && response.data && this.state.teamname == response.data.name) {
+                    let { existingteams } = this.state
+                    existingteams = [...existingteams, response.data]
+                    this.setState({ dynamicteammumbers: [], existingteams, error: true, errormessage: "team created Successfully" })
+                } else {
+                    this.setGenericError("please try after some time");
+                    return
+                }
+            }).catch(error => {
+                console.log(error.response)
+                this.setGenericError((error.response.data && error.response.data.error.message));
+                return
+            })
     }
 
 
@@ -86,14 +114,23 @@ class TeamFormationComponent extends React.Component {
         if (this.state.empid == this.props.empid) {
             return;
         }
-        if (isEmployeExists(this.state.empid)) {
-            let { dynamicteammumbers } = this.state
-            dynamicteammumbers.push(this.state.empid)
-            this.setState({ dynamicteammumbers, empid: null })
-            return;
-        } else {
+
+        if (!validateEmployeeId(this.state.empid)) {
             this.errorAck()
+            return;
         }
+
+        AXIOS.get('user/by/id?id=' + this.state.empid).then((response) => {
+            if (response && response.data && response.data.id == this.state.empid) {
+                let { dynamicteammumbers } = this.state
+                dynamicteammumbers.push(this.state.empid)
+                this.setState({ dynamicteammumbers })
+                return true;
+            }
+        }).catch(error => {
+            this.errorAck(error.response.data && error.response.data.error && error.response.data.error.message)
+            return;
+        })
     }
     remove = (index) => {
         let { dynamicteammumbers } = this.state
@@ -107,7 +144,7 @@ class TeamFormationComponent extends React.Component {
         };
         return (
             <>
-            <span><Link to="/project">Go to Project submit page</Link></span>
+                <span><Link to="/project">Go to Project submit page</Link></span>
                 <div style={mystyle.card} className="container">
                     <AlertComponent showFlag={this.state.error} variant='danger' message={this.state.errormessage} />
                     <div style={mystyle.p10}>
@@ -128,7 +165,7 @@ class TeamFormationComponent extends React.Component {
                                     this.state.dynamicteammumbers.length > 0 &&
                                     <Table>
                                         <tbody>
-                                            {this.state.dynamicteammumbers.map(function (object, index) {
+                                            {this.state.dynamicteammumbers.map((object, index) => {
                                                 return <tr key={index}>
                                                     <td>{object}</td>
                                                     <td>
@@ -148,7 +185,7 @@ class TeamFormationComponent extends React.Component {
                         </Form>
                     </div>
                     <hr></hr>
-                    <div style={mystyle.p10, mystyle.floatleft}>
+                    <div style={mystyle.p10}>
                         <h5>Teams created by you</h5>
                     </div>
                     <Table striped bordered hover>
@@ -159,10 +196,10 @@ class TeamFormationComponent extends React.Component {
                             </tr>
                         </thead>
                         {this.state.existingteams.map(function (object, index) {
-                            return <tbody>
+                            return <tbody key={index}>
                                 <tr>
                                     <td>{object.name}</td>
-                                    <td>{object.members}</td>
+                                    <td>{object.members.join()}</td>
                                 </tr>
                             </tbody>
                         })}

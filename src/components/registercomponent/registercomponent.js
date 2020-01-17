@@ -35,57 +35,42 @@ class LoginComponent extends React.Component {
         this.setState({ [name]: value, error: false, errormessage: null })
     }
 
-    setGenericError = () => {
+    setGenericError = (msg) => {
         this.setState({
-            error: true, errormessage: "please try after some time"
+            error: true, errormessage: msg || "please try after some time"
         })
     }
 
     handleSubmit = (event) => {
         if (this.validateForm()) {
-            alert(this.state.password)
-            // AXIOS.post('user/register', { id: this.state.empid, password: this.state.password, email: this.state.empemail }).
-            //     then(response => {
-            //         console.log(response)
-            //         if (response && response.data && this.state.empid == response.data.id) {
-            //             this.props.login({ session: true, empid: response.data.id, empemail: response.data.email, roles: response.data.roles })
-            //             this.props.history.push("/project")
-            //         } else {
-            //             this.setGenericError();
-            //             return
-            //         }
-            //     }).catch(error => {
-            //         console.log(error)
-            //         this.setGenericError();
-            //         return
-            //     })
-            this.props.login({
-                session: true,
-                empid: '422',
-                empemail: '422@hdworks.in',
-                roles: ['USER', 'ADMIN'],
-                teams: [
-                    {
-                        name: "TEAM_123",
-                        createdby: "422",
-                        members: ["423", "424", "425"]
+            AXIOS.post('user/register', { id: this.state.empid, password: this.state.password, email: this.state.empemail }).
+                then(response => {
+                    console.log(response)
+                    if (response && response.data && this.state.empid == response.data.id) {
+                        this.props.login({ session: true, empid: response.data.id, empemail: response.data.email, roles: response.data.roles })
+                        this.props.history.push("/project")
+                    } else {
+                        this.setGenericError();
+                        return
                     }
-                ]
-            })
-            this.props.history.push("/project")
-
-        } else {
-            this.setState({
-                error: true, errormessage: "please enter valid details"
-            })
-            return false
+                }).catch(error => {
+                    this.setGenericError((error.data && error.data.message));
+                    return
+                })
         }
     }
 
     validateForm = () => {
-        if (!validateEmployeeId(this.state.empid) ||
-            !validateEmployeeEmailId(this.state.empemail) ||
-            !validatePassword(this.state.password)) {
+        if (!validateEmployeeId(this.state.empid)) {
+            this.setGenericError("Enter a valid empid 3 digits");
+            return false;
+        }
+        if (!validateEmployeeEmailId(this.state.empemail)) {
+            this.setGenericError("Enter a valid emp email ****@hdworks.in");
+            return false;
+        }
+        if (!validatePassword(this.state.password)) {
+            this.setGenericError("Enter a valid Password 4-9 chars");
             return false;
         }
         return true;

@@ -12,6 +12,9 @@ import ProjectSubmissionComponent from '../projectsubmissioncomponent/projectsub
 import { logout } from '../../reducers/authorisationreducer/actions'
 import TeamFormationComponent from '../teamformation/teamformation'
 import PanelCreationComponent from '../createpanel/createpanel'
+import ProjectList from '../projectslist/projectslist'
+import Form from 'react-bootstrap/Form'
+import { FormControl, Button } from 'react-bootstrap'
 
 class MainComponent extends React.Component {
     constructor(props) {
@@ -29,9 +32,11 @@ class MainComponent extends React.Component {
                         <ProtectedLink to="/register" displayname="REGISTRATION" hideonlogin={true} />
                         <ProtectedLink to="/login" displayname="LOGIN" hideonlogin={true} />
                         <ProtectedLink to="/project" displayname="PROJECT SUBMISSION" mustlogin={true} />
+                        <ProtectedLink to="/team" displayname="Team-Formation" mustlogin={true} />
                         <ProtectedLink to="/panel" displayname="PANEL MEMBERS" mustlogin={true} admin={true} />
-                        <ProtectedLink to="/projectlist" displayname="PROJECTS LIST" mustlogin={true} admin={true} panel={true} />
+                        <ProtectedLink to="/projectlist" displayname="PROJECTS LIST" mustlogin={true} adminaandpanel={true} />
                         <ProtectedLink to="/login" onClick={this.props.logout} displayname="LOGOUT" mustlogin={true} />
+                        <ProtectedLink to="/home" displayname={this.props.empid + "-" + this.props.empmail} mustlogin={true} />
                     </Nav >
                 </Navbar >
                 <div className="text-center">
@@ -42,15 +47,23 @@ class MainComponent extends React.Component {
                         <ProtectedRoute path="/register" hideonlogin={true} component={RegisterComponent} />
                         <ProtectedRoute path="/login" hideonlogin={true} component={LoginComponent} />
                         <ProtectedRoute path="/project" mustlogin={true} component={ProjectSubmissionComponent} />
+                        <ProtectedRoute path="/projectlist" mustlogin={true} adminaandpanel={true} component={ProjectList} />
                         <ProtectedRoute path="/panel" mustlogin={true} admin={true} component={PanelCreationComponent} />
-                        <ProtectedRoute path="/projectlist" mustlogin={true} admin={true} panel={true} />
                     </Switch>
                 </div>
             </div>
         )
     }
 }
+const mapStateToProps = function (state) {
+    return {
+        empid: state.login.empid,
+        empmail: state.login.empemail,
+        roles: state.login.roles,
+        session: state.login.session
+    }
+}
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({ logout }, dispatch)
 }
-export default connect(null, mapDispatchToProps)(MainComponent)
+export default connect(mapStateToProps, mapDispatchToProps)(MainComponent)

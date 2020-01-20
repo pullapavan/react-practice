@@ -23,9 +23,9 @@ class MainComponent extends React.Component {
     }
     render() {
         return (
-            <div>
+            <React.Fragment>                
                 <Navbar bg="primary" variant="dark">
-                    <Navbar.Brand>Hackthon</Navbar.Brand>
+                    <Navbar.Brand>Hackathon</Navbar.Brand>
                     <Nav className="mr-auto">
                         <ProtectedLink to="/home" displayname="HOME" />
                         <ProtectedLink to="/rules" displayname="OVERVIEW" />
@@ -39,20 +39,18 @@ class MainComponent extends React.Component {
                         <ProtectedLink to="/home" displayname={this.props.empid + "-" + this.props.empmail} mustlogin={true} />
                     </Nav >
                 </Navbar >
-                <div className="">
-                    <Switch>
-                        <Route path='/home' component={HomeComponent}></Route>
-                        <Route exact path='/' component={HomeComponent}></Route>
-                        <Route path='/rules' component={RulesComponent}></Route>
-                        <Route path='/team' component={TeamFormationComponent}></Route>
-                        <ProtectedRoute path="/register" hideonlogin={true} component={RegisterComponent} />
-                        <ProtectedRoute path="/login" hideonlogin={true} component={LoginComponent} />
-                        <ProtectedRoute path="/project" mustlogin={true} component={ProjectSubmissionComponent} />
-                        <ProtectedRoute path="/projectlist" mustlogin={true} adminaandpanel={true} component={ProjectList} />
-                        <ProtectedRoute path="/panel" mustlogin={true} admin={true} component={PanelCreationComponent} />
-                    </Switch>
-                </div>
-            </div>
+                <Switch>
+                    <Route path='/home' component={RulesComponent}></Route>
+                    <Route exact path='/' component={RulesComponent}></Route>
+                    <Route path='/rules' component={RulesComponent}></Route>
+                    <Route path='/team' component={TeamFormationComponent}></Route>
+                    <ProtectedRoute path="/register" hideonlogin={true} component={RegisterComponent} />
+                    <ProtectedRoute path="/login" hideonlogin={true} component={LoginComponent} />
+                    <ProtectedRoute path="/project" mustlogin={true} component={ProjectSubmissionComponent} />
+                    <ProtectedRoute path="/projectlist" mustlogin={true} adminaandpanel={true} component={ProjectList} />
+                    <ProtectedRoute path="/panel" mustlogin={true} admin={true} component={PanelCreationComponent} />
+                </Switch>
+            </React.Fragment>
         )
     }
 }

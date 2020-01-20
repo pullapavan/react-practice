@@ -32,7 +32,7 @@ class ProjectsList extends React.Component {
         if (!this.props.session) {
             this.props.history.push("/home")
         }
-        AXIOS.get("idea/all").then((response) => {
+        AXIOS.get("idea/all").then((response) => {           
             if (response && response.data) {
                 let { completelist } = this.state
                 response.data.forEach((object, index) => {
@@ -112,7 +112,7 @@ class ProjectsList extends React.Component {
         return (
             <div>
                 <span><h4>Complete Projects List</h4></span>
-                <AlertComponent showFlag={this.state.error} variant='danger' message={this.state.errormessage} />
+                <AlertComponent showFlag={this.state.error && !this.state.showcommentbox} variant='danger' message={this.state.errormessage} />
                 <Table striped bordered hover>
                     <thead>
                         <tr>
@@ -152,6 +152,7 @@ class ProjectsList extends React.Component {
                 <CommonModal data={this.state.data} show={this.state.show} title={this.state.title} onHide={this.handleClose} />
 
                 <Modal show={this.state.showcommentbox} onHide={this.handleClose}>
+                    <AlertComponent showFlag={this.state.error && this.state.showcommentbox} variant='danger' message={this.state.errormessage} />
                     <Modal.Header closeButton>
                         <Modal.Title>Add comments -{this.state.title}</Modal.Title>
                     </Modal.Header>

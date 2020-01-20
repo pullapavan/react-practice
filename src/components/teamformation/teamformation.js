@@ -103,9 +103,6 @@ class TeamFormationComponent extends React.Component {
                 return
             })
     }
-
-
-
     errorAck = (msg) => {
         this.setState({ error: true, errormessage: msg || "Enter valid registered empID" })
     }
@@ -143,69 +140,72 @@ class TeamFormationComponent extends React.Component {
             p10: { padding: '10px' }
         };
         return (
-            <>
+
+            <div style={mystyle.card} className="container">
                 <span><Link to="/project">Go to Project submit page</Link></span>
-                <div style={mystyle.card} className="container">
-                    <AlertComponent showFlag={this.state.error} variant='danger' message={this.state.errormessage} />
-                    <div style={mystyle.p10}>
-                        <span><h4>Create Teams</h4></span>
-                    </div>
-                    <div style={mystyle.card} >
-                        <Form>
-                            <Form.Group controlId="teamname">
-                                <Form.Control name="teamname" onChange={this.handleChange} type="text" maxLength="20" placeholder="Enter your Team name" />
-                            </Form.Group>
-                            <Form.Group controlId="empid">
-                                <Form.Control onChange={this.handleChange} name="empid" type="text" placeholder="search EMPID" />
-                            </Form.Group>
-                            <Button onClick={this.searchId} variant="warning" type="button">
-                                Add to Team  </Button>
-                            <div style={mystyle.p10}>
-                                {
-                                    this.state.dynamicteammumbers.length > 0 &&
-                                    <Table>
-                                        <tbody>
-                                            {this.state.dynamicteammumbers.map((object, index) => {
-                                                return <tr key={index}>
-                                                    <td>{object}</td>
-                                                    <td>
-                                                        <Button onClick={(index) => this.remove(index)} variant="danger" type="button">
-                                                            Remove</Button>
-                                                    </td>
-                                                </tr>
-                                            })}
-                                        </tbody>
-                                    </Table>
-                                }
-                            </div>
-                            <div style={mystyle.p10}>
-                                <Button onClick={this.saveTeam} variant="primary" type="button">
-                                    Save Team  </Button>
-                            </div>
-                        </Form>
-                    </div>
-                    <hr></hr>
-                    <div style={mystyle.p10}>
-                        <h5>Teams created by you</h5>
-                    </div>
-                    <Table striped bordered hover>
-                        <thead>
-                            <tr>
-                                <th>Team Name</th>
-                                <th>Team Members</th>
-                            </tr>
-                        </thead>
-                        {this.state.existingteams.map(function (object, index) {
-                            return <tbody key={index}>
+                <div className="row">
+                    <div className="col">
+                        <AlertComponent showFlag={this.state.error} variant='danger' message={this.state.errormessage} />
+                        <div style={mystyle.p10}>
+                            <span><h4>Create Teams</h4></span>
+                        </div>
+                        <div style={mystyle.card} >
+                            <Form>
+                                <Form.Group controlId="teamname">
+                                    <Form.Control name="teamname" onChange={this.handleChange} type="text" maxLength="20" placeholder="Enter your Team name" />
+                                </Form.Group>
+                                <Form.Group controlId="empid">
+                                    <Form.Control onChange={this.handleChange} name="empid" type="text" placeholder="search EMPID" />
+                                </Form.Group>
+                                <Button onClick={this.searchId} variant="warning" type="button">
+                                    Add to Team  </Button>
+                                <div style={mystyle.p10}>
+                                    {
+                                        this.state.dynamicteammumbers.length > 0 &&
+                                        <Table>
+                                            <tbody>
+                                                {this.state.dynamicteammumbers.map((object, index) => {
+                                                    return <tr key={index}>
+                                                        <td>{object}</td>
+                                                        <td>
+                                                            <Button onClick={(index) => this.remove(index)} variant="danger" type="button">
+                                                                Remove</Button>
+                                                        </td>
+                                                    </tr>
+                                                })}
+                                            </tbody>
+                                        </Table>
+                                    }
+                                </div>
+                                <div style={mystyle.p10}>
+                                    <Button onClick={this.saveTeam} variant="primary" type="button">
+                                        Save Team  </Button>
+                                </div>
+                            </Form>
+                        </div>
+                        <hr></hr>
+                        <div style={mystyle.p10}>
+                            <h5>Teams created by you</h5>
+                        </div>
+                        <Table striped bordered hover>
+                            <thead>
                                 <tr>
-                                    <td>{object.name}</td>
-                                    <td>{object.members.join()}</td>
+                                    <th>Team Name</th>
+                                    <th>Team Members</th>
                                 </tr>
-                            </tbody>
-                        })}
-                    </Table>
+                            </thead>
+                            {this.state.existingteams.map(function (object, index) {
+                                return <tbody key={index}>
+                                    <tr>
+                                        <td>{object.name}</td>
+                                        <td>{object.members.join()}</td>
+                                    </tr>
+                                </tbody>
+                            })}
+                        </Table>
+                    </div>
                 </div>
-            </>
+            </div>
         )
     }
 }

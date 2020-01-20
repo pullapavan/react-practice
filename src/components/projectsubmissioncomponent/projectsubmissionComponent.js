@@ -57,6 +57,7 @@ class ProjectSubmissionComponent extends React.Component {
     }
     getAllSubmittedProjects = () => {
         AXIOS.get('idea/by/' + this.props.empid).then((response) => {
+            console.log(response)
             if (response && response.data) {
                 console.log(response)
                 let { submittedprojects } = this.state
@@ -102,8 +103,6 @@ class ProjectSubmissionComponent extends React.Component {
         this.setState({ [name]: value, error: false })
     }
     handleFileChange = (event) => {
-        // console.log(event.target.files)
-        // const { files } = event.target
         this.setState({ formdata: null })
         const formData = new FormData();
         for (let i = 0; i < event.target.files.length; i++) {
@@ -142,20 +141,13 @@ class ProjectSubmissionComponent extends React.Component {
         this.saveProjectToDatabase()
     }
     saveProjectToDatabase = () => {
-        //TODO make a server call
         var bodyFormData = this.state.formdata || new FormData();
-        // bodyFormData.set('body', JSON.stringify({
-        //     title: this.state.projecttitle,
-        //     type: this.state.projecttype,
-        //     description: this.state.projectdescription,
-        //     teamId: this.state.projectteam,
-        //     submittedBy: this.props.empid
-        // }));    
         bodyFormData.set('title', this.state.projecttitle);
         bodyFormData.set('type', this.state.projecttype);
         bodyFormData.set('description', this.state.projectdescription);
         bodyFormData.set('teamId', this.state.projectteam);
         bodyFormData.set('submittedBy', this.props.empid);
+        bodyFormData.set('target', this.state.projecttarget);
 
         AXIOS({
             method: 'post',
@@ -165,10 +157,8 @@ class ProjectSubmissionComponent extends React.Component {
         }).then((response) => {
             console.log(response)
             if (response && response.data && response.data.submittedBy == this.props.empid) {
-                let { submittedprojects } = this.state
-                submittedprojects.push(response.data)
-                this.setState({
-                    submittedprojects,
+                this.getAllSubmittedProjects()
+                this.setState({                   
                     projecttitle: null,
                     projecttype: "Improvement in our business or process",
                     projecttarget: null,
@@ -184,8 +174,17 @@ class ProjectSubmissionComponent extends React.Component {
         let { name } = event.target
         this.setState({ [name]: event.target.value });
     }
-    downloadAttachMent = (ideaid, attachmentid) => {
-        AXIOS.get('')
+    downloadAttachMent = (ideaid, attachmentid, name) => {
+        AXIOS.get('idea/' + ideaid + '/attachments/' + attachmentid).then(response => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', name);
+            document.body.appendChild(link);
+            link.click();
+        })
+
+
     }
     render() {
         const mystyle = {
@@ -218,13 +217,13 @@ class ProjectSubmissionComponent extends React.Component {
                                 <td>HDW-{object.submittedBy}</td>
                                 <td>{object.type}</td>
                                 <td>{object.target}</td>
-                                <td>{object.description}</td>
+                                <td><pre>{object.description}</pre></td>
                                 <td>{object.teamName}</td>
                                 <td>
                                     {
-                                        this.state.submittedprojects.attachments && this.state.submittedprojects.attachments.length > 0 &&
-                                        this.state.submittedprojects.attachments.map((attachment, index) => {
-                                            return <div onClick={() => this.downloadAttachMent(object.id, attachment.id)}>{attachment.name}</div>
+                                        this.state.submittedprojects[index].uploadedAttachments &&
+                                        this.state.submittedprojects[index].uploadedAttachments.map((attachment, index) => {
+                                            return <div onClick={() => this.downloadAttachMent(object.id, attachment.id, attachment.name)}><a href="#">{attachment.name}</a></div>
                                         })
                                     }
                                 </td>

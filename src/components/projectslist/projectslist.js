@@ -51,13 +51,14 @@ class ProjectsList extends React.Component {
             if (response && response.data) {
                 let comments = response.data.map((object, index) => {
                     return <tr key={index}>
-                        <td>{object.createdBy}</td>
-                        <td>{object.comments}</td>
+                        <td>EMP ID-{object.submittedBy}</td>
+                        <td><pre>{object.comment}</pre></td>
+                        <td>{object.submittedOn}</td>
                     </tr>
                 })
-                const ele = <Table>
+                const ele = <Table responsive>
                     <thead>
-                        <tr><td>Commented By</td><td>Comments</td></tr>
+                        <tr><td>Commented By</td><td>Comments</td><td>Date</td></tr>
                     </thead>
                     <tbody>
                         {comments}
@@ -92,7 +93,7 @@ class ProjectsList extends React.Component {
     }
 
     handleClose = () => {
-        this.setState({ data: null, show: false, showcommentbox: false, comments: null, title: null, projectid: null })
+        this.setState({ data: null, show: false, showcommentbox: false, comments: null, title: null, projectid: null, error: false })
     }
 
     handleChange = (event) => {
@@ -101,6 +102,10 @@ class ProjectsList extends React.Component {
     }
     openCommentsBox = (projectid, projectname) => {
         this.setState({ data: null, show: false, error: false, projectid: projectid, title: projectname, showcommentbox: true, comments: null })
+    }
+
+    downloadAttachMent = (ideaid, attachmentid) => {
+        AXIOS.get('')
     }
 
     render() {
@@ -116,6 +121,7 @@ class ProjectsList extends React.Component {
                             <th>Project Target</th>
                             <th>Project Description</th>
                             <th>Project Team</th>
+                            <th>Attachments</th>
                             <th>Panel Comments</th>
                         </tr>
                     </thead>
@@ -127,6 +133,14 @@ class ProjectsList extends React.Component {
                                 <td>{object.target}</td>
                                 <td>{object.description}</td>
                                 <td>{object.teamName}</td>
+                                <td>
+                                    {
+                                        this.state.completelist.attachments && this.state.completelist.attachments.length > 0 &&
+                                        this.state.completelist.attachments.map((attachment, index) => {
+                                            return <div onClick={() => this.downloadAttachMent(object.id, attachment.id)}>{attachment.name}</div>
+                                        })
+                                    }
+                                </td>
                                 <td>
                                     <Button type="button" onClick={() => this.viewComments(object.id, object.title)} size="sm" variant="outline-info">View Comments</Button>&nbsp;
                                     <Button type="button" onClick={() => this.openCommentsBox(object.id, object.title)} size="sm" variant="outline-info">Add Comments</Button>

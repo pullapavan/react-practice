@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
-import { Switch, Link, Route } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ProtectedLink from '../protectedlink'
@@ -13,8 +13,8 @@ import { logout } from '../../reducers/authorisationreducer/actions'
 import TeamFormationComponent from '../teamformation/teamformation'
 import PanelCreationComponent from '../createpanel/createpanel'
 import ProjectList from '../projectslist/projectslist'
-import Form from 'react-bootstrap/Form'
-import { FormControl, Button } from 'react-bootstrap'
+import HomeComponent from '../homecomponent/homecomponent'
+import RulesComponent from '../rulescomponent/rulescomponent'
 
 class MainComponent extends React.Component {
     constructor(props) {
@@ -32,17 +32,18 @@ class MainComponent extends React.Component {
                         <ProtectedLink to="/register" displayname="REGISTRATION" hideonlogin={true} />
                         <ProtectedLink to="/login" displayname="LOGIN" hideonlogin={true} />
                         <ProtectedLink to="/project" displayname="PROJECT SUBMISSION" mustlogin={true} />
-                        <ProtectedLink to="/team" displayname="Team-Formation" mustlogin={true} />
+                        <ProtectedLink to="/team" displayname="TEAM-FORMATION" mustlogin={true} />
                         <ProtectedLink to="/panel" displayname="PANEL MEMBERS" mustlogin={true} admin={true} />
                         <ProtectedLink to="/projectlist" displayname="PROJECTS LIST" mustlogin={true} adminaandpanel={true} />
                         <ProtectedLink to="/login" onClick={this.props.logout} displayname="LOGOUT" mustlogin={true} />
                         <ProtectedLink to="/home" displayname={this.props.empid + "-" + this.props.empmail} mustlogin={true} />
                     </Nav >
                 </Navbar >
-                <div className="text-center">
+                <div className="">
                     <Switch>
-                        <Route path='/home' render={() => <div>Home Component</div>}></Route>
-                        <Route path='/rules' render={() => <div>Rules Component</div>}></Route>
+                        <Route path='/home' component={HomeComponent}></Route>
+                        <Route exact path='/' component={HomeComponent}></Route>
+                        <Route path='/rules' component={RulesComponent}></Route>
                         <Route path='/team' component={TeamFormationComponent}></Route>
                         <ProtectedRoute path="/register" hideonlogin={true} component={RegisterComponent} />
                         <ProtectedRoute path="/login" hideonlogin={true} component={LoginComponent} />

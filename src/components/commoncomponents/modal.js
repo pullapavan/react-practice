@@ -7,7 +7,7 @@ class CommonModal extends React.Component {
 
     render() {
         return (
-            <Modal show={this.props.show} onHide={this.props.onHide}>
+            <Modal  size ="lg" show={this.props.show} onHide={this.props.onHide}>
                 <Modal.Header closeButton>
                     <Modal.Title>{this.props.title}</Modal.Title>
                 </Modal.Header>

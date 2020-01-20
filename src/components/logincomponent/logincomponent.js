@@ -47,7 +47,7 @@ class LoginComponent extends React.Component {
                     console.log(response)
                     if (response && response.data) {
                         this.props.login({ session: true, empid: response.data.id, empemail: response.data.email, roles: response.data.roles })
-                        this.props.history.push("/project")
+                        this.props.history.push("/team")
                     } else {
                         this.setGenericError();
                         return
@@ -62,7 +62,7 @@ class LoginComponent extends React.Component {
 
     validateForm = () => {
         if (!validateEmployeeId(this.state.empid)) {
-            this.setGenericError("Enter a valid empid/email");
+            this.setGenericError("Enter a valid empid");
             return false;
         }
         if (!validatePassword(this.state.password)) {
@@ -87,7 +87,7 @@ class LoginComponent extends React.Component {
                             <React.Fragment>
                                 <Form>
                                     <Form.Group controlId="empid">
-                                        <Form.Control name="empid" onChange={this.handleChange} type="text" placeholder="Enter Employee ID/ Email" />
+                                        <Form.Control name="empid" onChange={this.handleChange} type="text" placeholder="Enter Employee ID" />
                                     </Form.Group>
                                     <Form.Group controlId="passowrd">
                                         <Form.Control onChange={this.handleChange} name="password" type="password" placeholder="Enter Password(min 4,max 9)" />

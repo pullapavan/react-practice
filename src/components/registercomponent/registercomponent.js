@@ -48,7 +48,7 @@ class LoginComponent extends React.Component {
                     console.log(response)
                     if (response && response.data && this.state.empid == response.data.id) {
                         this.props.login({ session: true, empid: response.data.id, empemail: response.data.email, roles: response.data.roles })
-                        this.props.history.push("/project")
+                        this.props.history.push("/team")
                     } else {
                         this.setGenericError();
                         return

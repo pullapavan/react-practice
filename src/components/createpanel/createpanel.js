@@ -77,7 +77,7 @@ class PanelCreationComponent extends React.Component {
         this.setState({ [name]: value, error: false, errormessage: null })
     }
     handleClose = () => {
-        this.setState({ show: false })
+        this.setState({ show: false, error: false })
     }
     render() {
         const mystyle = {

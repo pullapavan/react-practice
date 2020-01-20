@@ -2,10 +2,8 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import App from './App';
 import { createStore } from 'redux';
 import loginreducer from './reducers/authorisationreducer/index'
-import dummyreducer from './reducers/dummyreducer/index'
 import { combineReducers } from 'redux'
 import { saveStateToLocalStorae } from '../src/store/persistandrestorestate'
 import MainComponent from './components/maincomponent/index'
